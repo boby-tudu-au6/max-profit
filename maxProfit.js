@@ -53,6 +53,10 @@ const calculateMaxProfit = (time) => {
     const values = Object.values(tempObj)
     while (time > values[0]) {
         const allTwice = keys.filter(item => time > tempObj[item] * 2)
+        const newTempObj = { ...tempObj }
+        Object.keys(newTempObj).forEach(item => {
+            if (newTempObj[item] > time) delete newTempObj[item]
+        })
 
         if (allTwice.length === keys.length) {
             console.log("block-1")
@@ -63,16 +67,20 @@ const calculateMaxProfit = (time) => {
             console.log("block-2")
             let key = 0
             if (time >= tempObj[keys[key]] * 2) key = keys.length - 1
-            console.log(key, time);
-            profits[keys[key]] += 1
-            max += earnings[keys[key]] * (time - values[key])
-            time -= values[key]
+            if (newTempObj[keys[key]]) {
+                profits[keys[key]] += 1
+                max += earnings[keys[key]] * (time - values[key])
+                time -= values[key]
+            } else {
+                profits[keys[key - 1]] += 1
+                max += earnings[keys[key - 1]] * (time - values[key - 1])
+                time -= values[key - 1]
+            }
         } else if (allTwice.length === 1) {
             console.log("block-3")
             profits[keys[1]] += 1
             max += earnings[keys[1]] * (time - values[1])
             time -= values[1]
-            console.log(time, );
         } else if (allTwice.length === 2) {
             console.log("block-4")
             profits[keys[1]] += 1
@@ -89,7 +97,7 @@ const calculateMaxProfit = (time) => {
     console.log({ profits, max })
 }
 
-calculateMaxProfit(13)
+calculateMaxProfit(14)
 
 // 10 - 8500
 // 14 - 19500
